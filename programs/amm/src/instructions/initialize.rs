@@ -41,7 +41,7 @@ pub struct Initialize<'info> {
         payer = initializer,
         seeds = [b"config", seed.to_le_bytes().as_ref()],
         bump,
-        space = Config::INIT_SPACE,
+        space = 8 + Config::INIT_SPACE,
     )]
     pub config: Account<'info, Config>,
     pub token_program: Program<'info, Token>,

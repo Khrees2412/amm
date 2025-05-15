@@ -13,6 +13,7 @@ pub struct Deposit<'info> {
     pub user: Signer<'info>,
     pub mint_x: Account<'info, Mint>,
     pub mint_y: Account<'info, Mint>,
+
     #[account(
         has_one = mint_x,
         has_one = mint_y,
@@ -20,30 +21,35 @@ pub struct Deposit<'info> {
         bump = config.config_bump,
     )]
     pub config: Account<'info, Config>,
+
     #[account(
         mut,
         seeds = [b"lp", config.key().as_ref()],
         bump = config.lp_bump,
     )]
     pub mint_lp: Account<'info, Mint>,
+
     #[account(
         mut,
         associated_token::mint = mint_x,
         associated_token::authority = config,
     )]
     pub vault_x: Account<'info, TokenAccount>,
+
     #[account(
         mut,
         associated_token::mint = mint_y,
         associated_token::authority = config,
     )]
     pub vault_y: Account<'info, TokenAccount>,
+
     #[account(
         mut,
         associated_token::mint = mint_x,
         associated_token::authority = user,
     )]
     pub user_x: Account<'info, TokenAccount>,
+
     #[account(
         associated_token::mint = mint_y,
         associated_token::authority = user,
@@ -139,6 +145,8 @@ impl<'info> Deposit<'info> {
         ];
         let signer_seeds = &[&seeds[..]];
         let ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
+
+        mint_to(ctx, amount)?;
 
         Ok(())
     }
